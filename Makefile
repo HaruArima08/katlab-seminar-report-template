@@ -26,7 +26,7 @@ CP_CMD          = $(DOCKER_PREFIX) $(CD_PREFIX) cp
 RM_CMD          = $(DOCKER_PREFIX) $(CD_PREFIX) rm -rf
 
 # ファイル監視スクリプト（全環境対応）
-WATCH_CMD       = $(DOCKER_PREFIX) bash /workspace/scripts/watch.sh
+WATCH_CMD       = $(DOCKER_PREFIX) bash -c 'sed -i "s/\r$//" /workspace/scripts/watch.sh && bash /workspace/scripts/watch.sh'
 LATEX_SINGLE = $(LATEX_CMD)
 
 # デフォルトターゲット
