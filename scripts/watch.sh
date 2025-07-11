@@ -26,16 +26,18 @@ compile_all() {
 ###############################
 monitor_method="polling"
 if command -v inotifywait >/dev/null 2>&1; then
-  echo "[INFO] Testing inotifywait availability..."
-  tmpfile=$(mktemp)
-  inotifywait -q -e modify "$tmpfile" --timeout 1 >/dev/null 2>&1 &
+  echo "[INFO] Checking inotify functionality on mounted directory..."
+  testfile="src/.inotify_test_$$"
+  inotifywait -qq -e create "src" --timeout 1 &
   pid=$!
-  sleep 0.3
-  echo "x" >> "$tmpfile"
+  touch "$testfile"
   if wait $pid 2>/dev/null; then
     monitor_method="inotify"
+    echo "[INFO] inotify events detected on mounted directory. Using inotify."
+  else
+    echo "[WARN] inotify events NOT detected on mounted directory. Falling back to polling."
   fi
-  rm -f "$tmpfile"
+  rm -f "$testfile"
 fi
 
 echo "[INFO] Using $monitor_method based monitoring"
@@ -75,5 +77,4 @@ while true; do
   if $changed; then
     compile_all
   fi
-  sleep 2
 done 
