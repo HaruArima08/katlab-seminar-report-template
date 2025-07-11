@@ -11,7 +11,9 @@ RUN apt-get update && \
     make \
     inotify-tools \
     procps \
-    locales && \
+    locales \
+    coreutils \
+    util-linux && \
     # ロケールの生成と設定
     sed -i -E 's/# (ja_JP.UTF-8)/\1/' /etc/locale.gen && \
     locale-gen && \

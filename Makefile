@@ -19,24 +19,14 @@ else
 endif
 
 # 共通のコマンドを定義
-LATEX_CMD = $(DOCKER_PREFIX) $(CD_PREFIX) TEXINPUTS=./src//: latexmk -pdfdvi
-LATEX_CLEAN = $(DOCKER_PREFIX) $(CD_PREFIX) latexmk -c
+LATEX_CMD       = $(DOCKER_PREFIX) $(CD_PREFIX) TEXINPUTS=./src//: LANG=ja_JP.UTF-8 LC_ALL=ja_JP.UTF-8 latexmk -pdfdvi
+LATEX_CLEAN     = $(DOCKER_PREFIX) $(CD_PREFIX) latexmk -c
 LATEX_CLEAN_ALL = $(DOCKER_PREFIX) $(CD_PREFIX) latexmk -C
-CP_CMD = $(DOCKER_PREFIX) $(CD_PREFIX) cp
-RM_CMD = $(DOCKER_PREFIX) $(CD_PREFIX) rm -rf
-WATCH_CMD = $(DOCKER_PREFIX) bash -c 'cd /workspace && \
-    while true; do \
-        inotifywait -r -e modify,create,delete src/*.tex; \
-        echo "Changes detected, recompiling..."; \
-        for tex in src/*.tex; do \
-            if [ -f "$$tex" ]; then \
-                echo "Compiling: $$tex"; \
-                TEXINPUTS=./src//: latexmk -pdfdvi "$$tex" && \
-                mkdir -p pdf && \
-                cp build/$$(basename "$$tex" .tex).pdf pdf/ || echo "Failed to copy PDF for $$tex"; \
-            fi \
-        done; \
-    done'
+CP_CMD          = $(DOCKER_PREFIX) $(CD_PREFIX) cp
+RM_CMD          = $(DOCKER_PREFIX) $(CD_PREFIX) rm -rf
+
+# ファイル監視スクリプト（全環境対応）
+WATCH_CMD       = $(DOCKER_PREFIX) bash -c "sed -i 's/\r$$//' /workspace/scripts/watch.sh && bash /workspace/scripts/watch.sh"
 LATEX_SINGLE = $(LATEX_CMD)
 
 # デフォルトターゲット
@@ -70,9 +60,9 @@ compile: ## src 下の .tex ファイルをコンパイル
 	@echo "コンパイル完了、ファイルの変更監視を開始"
 	@make watch
 
-watch: ## ファイル変更を監視してコンパイル
+watch: ## ファイル変更を監視してコンパイル（全環境対応）
 	@mkdir -p pdf build
-	@echo "watching: src/*.tex"
+	@echo "watching: src/*.tex (auto-detecting best method for your environment)"
 	$(WATCH_CMD)
 
 copy: ## 最新の .tex ファイルをコピーして日付を更新
@@ -86,7 +76,7 @@ copy: ## 最新の .tex ファイルをコピーして日付を更新
 		fi; \
 		cat "$$latest_tex" | sed -e "s/^\\\date{.*}/\\\date{$$(LANG=C LC_ALL=C TZ=Asia/Tokyo date '+%Y-%m-%d %a')}/g" > "$${FILE_NAME}"; \
 		echo "CREATED: $${FILE_NAME}"; \
-		$(LATEX_SINGLE) src/$${FILE_BASENAME} && \
+		LANG=ja_JP.UTF-8 LC_ALL=ja_JP.UTF-8 $(LATEX_SINGLE) src/$${FILE_BASENAME} && \
 		$(CP_CMD) build/$$(basename $${FILE_BASENAME} .tex).pdf pdf/; \
 		code "$${FILE_NAME}"; \
 		make watch "$${FILE_BASENAME}" & \
@@ -146,12 +136,12 @@ setup: ## 初回セットアップ (ビルド + 起動)
 		echo "[INFO] Dev Container 環境では make setup による初回セットアップは不要です。"; \
 		echo "以下のコマンドでコンパイルできます:"; \
 		echo "  make compile  # src 下の .tex ファイルをコンパイル"; \
-		echo "  make watch   # ファイルの変更を監視してコンパイル"; \
+		echo "  make watch    # ファイルの変更を監視してコンパイル（全環境対応）"; \
 	else \
 		make build up; \
 		echo "環境構築を完了しました。以下のコマンドでコンパイルできます:"; \
 		echo "  make compile  # src 下の .tex ファイルをコンパイル"; \
-		echo "  make watch   # ファイルの変更を監視してコンパイル"; \
+		echo "  make watch    # ファイルの変更を監視してコンパイル（全環境対応）"; \
 	fi
 
 dev: ## 開発モード (起動 + 監視コンパイル)
