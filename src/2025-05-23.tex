@@ -1,0 +1,62 @@
+\documentclass[uplatex, onecolumn, 10pt]{jsarticle}
+
+\usepackage[dvipdfmx]{graphicx}
+\usepackage{latexsym}
+\usepackage{bmpsize}
+\usepackage{url}
+\usepackage{comment}
+
+\def\Underline{\setbox0\hbox\bgroup\let\\\endUnderline}
+\def\endUnderline{\vphantom{y}\egroup\smash{\underline{\box0}}\\}
+
+\newcommand{\ttt}[1]{\texttt{#1}}
+
+\begin{document}
+
+\title{\vspace{-40mm}\bf{\LARGE{ゼミ報告書}}}
+\author{\vspace{-40mm}有馬 温 60220109}
+\date{2025-05-23 Fri}
+\maketitle
+
+
+\section{今日までにやったこと}
+
+\subsection*{研究関連} 
+\begin{itemize}
+	\item 研究テーマ選定
+		\begin{itemize}
+			\item 「大規模言語モデルの活用によるテスト駆動開発の継続的支援を目的としたフレームワークCATddの開発」 
+			\begin{itemize}
+                \item 実際に動かしてみて、LLMによるソースコードの自動生成においてテストケースに対応していない部分の検出、リファクタリングによる変更を保持できる機能はとてもよかった。\\
+                課題に対する機能拡張で考えると、生成するソースコードの品質向上はTDDというより、ソースコードの自動生成（AI）に関する方に偏ってしまうか。\\
+                TDDの実装工程を継続的支援するCATddに、テスト設計工程において支援できるような機能があるのはどうかと思った。（具体例を考える必要がある）
+            \end{itemize}
+		\end{itemize}
+\end{itemize}
+
+\subsection*{その他}
+\begin{itemize}
+	\item ロボコン タスク
+	\item ハッカソンMTG
+	\item c++ 勉強
+	\item React 勉強
+\end{itemize}
+
+
+\section{次までにやること}
+
+\subsection*{研究関連}
+\begin{itemize}
+	\item CATdd関連の調査
+    \item ほかの研究テーマについても考えてみる
+\end{itemize}
+
+\subsection*{その他}
+\begin{itemize}
+    \item ロボコン タスク
+    \item ハッカソン テーマ選定
+    \item c++ 勉強
+    \item React 勉強
+\end{itemize}
+
+\end{document}
